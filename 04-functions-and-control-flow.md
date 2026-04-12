@@ -168,6 +168,53 @@ where K: Equal<K>, K: Hashable
 }
 ```
 
+Use explicit generics whenever a parameter is constrained by a trait.
+
+Examples:
+
+Any type that satisfies a trait:
+
+```vek
+fn render<T: Named>(value: T) -> string {
+  return value.name();
+}
+```
+
+Two independent values that each satisfy the same trait:
+
+```vek
+fn print_both<A: Printable, B: Printable>(a: A, b: B) -> void {
+  a.print();
+  b.print();
+}
+```
+
+Two values that must be the same concrete type:
+
+```vek
+fn compare<T: Equal<T>>(left: T, right: T) -> bool {
+  return left.equals(right);
+}
+```
+
+Input and output that must be the same concrete type:
+
+```vek
+fn duplicate<T: Cloneable>(value: T) -> T {
+  return value.clone();
+}
+```
+
+Long-form equivalent using `where`:
+
+```vek
+fn duplicate<T>(value: T) -> T
+where T: Cloneable
+{
+  return value.clone();
+}
+```
+
 Rules:
 
 - `T: TraitName` is the short form for a single clear constraint
