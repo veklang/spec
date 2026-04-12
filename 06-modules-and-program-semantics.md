@@ -68,7 +68,58 @@ Examples:
 - `some_package:some/path`
 - `my_project:utils/thing`
 
-Package discovery and registry mechanics remain `TBD`.
+## Packages
+
+A package is a directory tree rooted at a folder that contains `package.toml`.
+
+That manifest defines the package identity used by `name:path/...` imports.
+
+Minimal example:
+
+```toml
+name = "my_project"
+version = "0.1.0"
+```
+
+Rules:
+
+- a directory is a package iff it contains `package.toml`
+- the package root is the directory that contains `package.toml`
+- `package.toml` must define `name`
+- `name` is the package-import prefix used in source code, such as `my_project:utils/math`
+- the package name is semantic; it is not inferred from the folder name
+- package names must be unique within the active dependency graph
+- paths without a package prefix continue to resolve relative to the importing file
+- package-prefixed paths resolve relative to the target package root
+- `std` is a reserved package name for the standard library package
+
+`package.toml` is intended to stay small in v1.
+
+The currently defined top-level keys are:
+
+- `name: string`
+- `version: string`
+
+Implementations may later add dependency and build metadata, but the existence of a package and its import prefix are defined by `package.toml` plus `name`.
+
+## Package Resolution
+
+Package resolution happens in two layers:
+
+1. discover a package by its manifest and `name`
+2. resolve the module path inside that package using the normal file rules
+
+For a package import such as `collections:hash/map`:
+
+- the compiler first locates the package whose `package.toml` declares `name = "collections"`
+- it then resolves `hash/map` relative to that package root
+- module-file lookup inside the package uses the same ordered rules as local imports:
+  1. `path`
+  2. `path.vek`
+  3. `path/index`
+  4. `path/index.vek`
+
+The exact dependency-graph and registry/distribution mechanics are intentionally left open for now.
 
 ## Top-Level Initializers
 

@@ -116,6 +116,14 @@ Examples:
 
 Use directory structure to express hierarchy instead of long compound module names where practical.
 
+Package names should also use `snake_case`.
+
+Examples:
+
+- `std`
+- `my_project`
+- `http_tools`
+
 ## Methods
 
 Methods follow the same `snake_case` naming convention as functions.
