@@ -91,6 +91,7 @@ Rules:
 - package names must be unique within the active dependency graph
 - paths without a package prefix continue to resolve relative to the importing file
 - package-prefixed paths resolve relative to the target package root
+- `core` is a reserved package name for the core library package
 - `std` is a reserved package name for the standard library package
 
 `package.toml` is intended to stay small in v1.
@@ -180,25 +181,4 @@ Typical roots include:
 
 Unused declarations may be dropped before C emission. Linker-level dead-code elimination may further reduce the final binary.
 
-## Standard Library Layering
-
-The public standard library should feel like ordinary Vek code, not direct libc usage.
-
-Conceptually the stack is:
-
-```text
-public stdlib in Vek
-  -> internal stdlib modules / bindings
-  -> tiny C support ABI
-  -> libc / platform C API
-```
-
-Internal modules may use implementation-oriented names such as:
-
-- `std:__core.mem`
-- `std:__core.str`
-- `std:__core.array`
-- `std:__core.io`
-- `std:__core.proc`
-
-These internal modules are not part of the stable public user-facing API.
+The runtime/core/std layering is defined in chapters 7 through 9.

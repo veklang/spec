@@ -181,6 +181,7 @@ Rules:
 - traits may have first-order type parameters
 - trait arguments are part of trait identity and must match exactly
 - trait objects and dynamic dispatch are not supported
+- using a trait name directly in parameter position is separate sugar for an implicit constrained type parameter, as described in chapter 4
 - associated types are not supported
 - default generic parameters on traits are not supported
 - specialization is not supported
@@ -188,73 +189,7 @@ Rules:
 - two satisfied traits may not expose the same method name on the same struct or enum
 - a struct or enum may not contain more than one `satisfies` block for the same trait
 
-## Core Traits
-
-The language defines a small set of global core-library declarations for common operations.
-
-```vek
-trait Equal<T> {
-  fn equals(self, other: T) -> bool;
-}
-
-trait Hashable {
-  fn hash(self) -> u64;
-}
-
-trait Ordered<T> {
-  fn compare(self, other: T) -> Ordering;
-}
-
-trait Cloneable {
-  fn clone(self) -> Self;
-}
-
-trait Iterable<T> {
-  fn next(mut self) -> T?;
-}
-
-trait Defaultable {
-  fn default() -> Self;
-}
-
-trait Formattable {
-  fn format(self) -> string;
-}
-
-trait Unwrappable<T> {
-  fn unwrap(self) -> T;
-}
-
-fn panic(message: string) -> void;
-
-enum Ordering {
-  Less;
-  Equal;
-  Greater;
-}
-
-enum Result<T, E> {
-  Ok(T);
-  Err(E);
-
-  satisfies Unwrappable<T> {
-    fn unwrap(self) -> T {
-      match self {
-        Ok(v) => return v,
-        Err(_) => panic("unwrap on Err"),
-      }
-    }
-  }
-}
-```
-
-`Equal<T>` is the core equality trait. Custom `==` behavior for user-defined types is expressed through this trait.
-
-`Formattable` is the core explicit string-conversion trait. Core primitive numerics, `bool`, and `string` satisfy `Formattable`.
-
-`panic` is a core global function for unrecoverable failure paths.
-
-These declarations are provided by the internal core library and are available globally without import. They are part of the language/compiler surface, not the public standard library.
+The language-level trait mechanics are defined here. The standard global core traits themselves are specified in chapter 8.
 
 ## Enums
 
@@ -273,33 +208,27 @@ Enum variants are terminated with `;`.
 Example:
 
 ```vek
-enum Result<T, E> {
-  Ok(T);
-  Err(E);
-
-  satisfies Unwrappable<T> {
-    fn unwrap(self) -> T {
-      match self {
-        Ok(v) => return v,
-        Err(_) => panic("unwrap on Err"),
-      }
-    }
-  }
+enum Message {
+  Info(string);
+  Warning(string);
+  Error(string);
 }
 ```
 
 Trait conformance on enums uses the same `satisfies` form:
 
 ```vek
-enum Result<T, E> {
-  Ok(T);
-  Err(E);
+enum Message {
+  Info(string);
+  Warning(string);
+  Error(string);
 
   satisfies Printable {
     fn print(self) -> void {
       match self {
-        Ok(_) => io.print("ok\n"),
-        Err(_) => io.print("err\n"),
+        Info(_) => io.print("info\n"),
+        Warning(_) => io.print("warning\n"),
+        Error(_) => io.print("error\n"),
       }
     }
   }
@@ -309,9 +238,10 @@ enum Result<T, E> {
 Matching over payload enums:
 
 ```vek
-match read_config() {
-  Ok(cfg) => io.print(cfg + "\n"),
-  Err(e)  => io.eprint("error: " + e + "\n"),
+match message {
+  Info(text) => io.print(text + "\n"),
+  Warning(text) => io.eprint("warning: " + text + "\n"),
+  Error(text) => io.eprint("error: " + text + "\n"),
 }
 ```
 

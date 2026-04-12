@@ -146,15 +146,10 @@ let c = s[0]; // "c"
 
 ## Example: Result-Based Errors
 
-This example defines a local `Result<T, E>` enum purely to demonstrate the pattern. The real `Result<T, E>` used by the language is provided globally by the internal core library.
+This example uses the global `Result<T, E>` from the core-library prelude.
 
 ```vek
 import "std:io" as io;
-
-enum Result<T, E> {
-  Ok(T);
-  Err(E);
-}
 
 fn might_fail(flag: bool) -> Result<i32, string> {
   if flag {
@@ -225,18 +220,7 @@ struct User {
 
 ## Example: Generic Trait
 
-This section shows two related forms:
-
-- a generic trait definition
-- an explicit manual implementation with `satisfies`
-
-```vek
-trait Equal<T> {
-  fn equals(self, other: T) -> bool;
-}
-```
-
-Manual implementation:
+This section shows an explicit manual implementation with `satisfies` using a global core trait.
 
 ```vek
 struct UserId {

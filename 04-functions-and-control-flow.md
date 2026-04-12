@@ -38,6 +38,7 @@ connect("db.local", 5433);
 - parameters are positional only
 - `mut` appears before the parameter name: `mut x: i32`
 - `x: mut i32` is not valid syntax
+- a trait name may appear in parameter type position as shorthand for an implicit constrained type parameter
 - default values are not supported
 - variadic parameters are not supported
 
@@ -48,6 +49,39 @@ fn print(message: string, stream: Stream) { ... }
 fn greet(name: string, suffix: string) { ... }
 fn push_one(mut xs: i32[]) -> void { ... }
 ```
+
+### Trait Parameter Sugar
+
+In a function or method parameter declaration, a trait name may be used directly as the parameter type.
+
+Example:
+
+```vek
+fn read_line(mut reader: Reader) -> Result<string, Error> {
+  ...
+}
+```
+
+This is shorthand for an implicit constrained type parameter with static dispatch, not a trait object.
+
+Conceptually, the example above desugars to:
+
+```vek
+fn read_line<__Reader0>(mut reader: __Reader0) -> Result<string, Error>
+where __Reader0: Reader
+{
+  ...
+}
+```
+
+Rules:
+
+- the sugar introduces a fresh hidden type parameter per parameter
+- inside the function body, the parameter may be used through the trait surface guaranteed by that constraint
+- this remains statically dispatched and monomorphized
+- this sugar does not mean trait objects or dynamic dispatch
+- if multiple parameters or a return type must refer to the same concrete type, write explicit generics instead
+- this sugar is valid only in parameter declarations, not in local bindings, struct fields, enum payloads, return types, or function type syntax
 
 ## Function Value Status
 
@@ -63,7 +97,7 @@ Anonymous functions are non-capturing in v1.
 
 - they may refer to their own parameters
 - they may refer to bindings declared inside their own body
-- they may refer to global/core/module-level symbols
+- they may refer to global or module-level symbols
 - they may not capture bindings from an enclosing local function scope
 
 Using an outer local binding inside an anonymous function is a compile-time error.
@@ -175,6 +209,7 @@ Rules:
 - multiple constraints are written as repeated entries, such as `where K: Equal<K>, K: Hashable`
 - generic trait arguments are written explicitly, such as `Equal<T>`
 - constraint matching is explicit and unambiguous
+- parameter-position trait names are shorthand for hidden constrained type parameters, not trait-object types
 - associated types and specialization are out of scope for v1
 
 ## Tuple Returns
@@ -209,9 +244,7 @@ fn read_config() -> Result<string, string> {
 }
 ```
 
-`Result` is a compiler-known global type provided by the internal core library. It does not need to be imported in user code.
-
-`panic` is likewise a compiler-known global core function and does not need to be imported.
+`Result` and `panic` come from the global core-library prelude described in chapter 8. They do not need to be imported in user code.
 
 ## Conditionals
 
@@ -309,7 +342,7 @@ while true {}
 
 `for item in expr { ... }` iterates over values produced by `expr`.
 
-- arrays satisfy `Iterable<T>` in the core library
+- arrays satisfy the global `Iterable<T>` trait from the core library
 - user-defined iterable types may participate by satisfying `Iterable<T>`
 - iteration proceeds by repeatedly calling `next(mut self) -> T?` until `null` is returned
 - the loop creates a hidden mutable temporary from `expr` and repeatedly calls `next` on that temporary
