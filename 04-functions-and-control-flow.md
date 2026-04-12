@@ -38,7 +38,6 @@ connect("db.local", 5433);
 - parameters are positional only
 - `mut` appears before the parameter name: `mut x: i32`
 - `x: mut i32` is not valid syntax
-- a trait name may appear in parameter type position as shorthand for an implicit constrained type parameter
 - default values are not supported
 - variadic parameters are not supported
 
@@ -49,77 +48,6 @@ fn print(message: string, stream: Stream) { ... }
 fn greet(name: string, suffix: string) { ... }
 fn push_one(mut xs: i32[]) -> void { ... }
 ```
-
-### Trait Parameter Sugar
-
-In a function or method parameter declaration, a trait name may be written directly as the parameter type.
-
-This is only sugar for an implicit constrained generic parameter.
-
-It does not introduce a trait-object type.
-It does not imply dynamic dispatch.
-It does not erase the concrete type.
-
-Example:
-
-```vek
-fn read_line(mut reader: Reader) -> Result<string, Error> {
-  ...
-}
-```
-
-This is shorthand for an implicit constrained type parameter with static dispatch, not a trait object.
-
-Conceptually, the example above desugars to:
-
-```vek
-fn read_line<__Reader0>(mut reader: __Reader0) -> Result<string, Error>
-where __Reader0: Reader
-{
-  ...
-}
-```
-
-Each sugared parameter introduces its own fresh hidden type parameter.
-
-That means:
-
-```vek
-fn pair(a: Reader, b: Reader) -> void {
-  ...
-}
-```
-
-conceptually desugars to:
-
-```vek
-fn pair<__Reader0, __Reader1>(a: __Reader0, b: __Reader1) -> void
-where __Reader0: Reader, __Reader1: Reader
-{
-  ...
-}
-```
-
-So `a` and `b` are not required to have the same concrete type.
-
-If multiple parameters or a return position must refer to the same concrete type, write the generic explicitly:
-
-```vek
-fn pair_same<T: Reader>(a: T, b: T) -> void {
-  ...
-}
-```
-
-Rules:
-
-- the sugar introduces a fresh hidden type parameter per parameter
-- inside the function body, the parameter may be used through the trait surface guaranteed by that constraint
-- this remains statically dispatched and monomorphized
-- this sugar does not mean trait objects or dynamic dispatch
-- if multiple parameters or a return type must refer to the same concrete type, write explicit generics instead
-- this sugar is valid only in parameter declarations
-- this sugar is not valid in local bindings, struct fields, enum payloads, return types, or function type syntax
-- a trait name outside this parameter-sugar position is not a first-class trait-object type in v1
 
 ## Function Value Status
 
@@ -247,7 +175,6 @@ Rules:
 - multiple constraints are written as repeated entries, such as `where K: Equal<K>, K: Hashable`
 - generic trait arguments are written explicitly, such as `Equal<T>`
 - constraint matching is explicit and unambiguous
-- parameter-position trait names are shorthand for hidden constrained type parameters, not trait-object types
 - associated types and specialization are out of scope for v1
 
 ## Tuple Returns

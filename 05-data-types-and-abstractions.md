@@ -181,7 +181,6 @@ Rules:
 - traits may have first-order type parameters
 - trait arguments are part of trait identity and must match exactly
 - trait objects and dynamic dispatch are not supported
-- using a trait name directly in parameter position is separate sugar for an implicit constrained type parameter, as described in chapter 4
 - associated types are not supported
 - default generic parameters on traits are not supported
 - specialization is not supported
