@@ -52,7 +52,13 @@ fn push_one(mut xs: i32[]) -> void { ... }
 
 ### Trait Parameter Sugar
 
-In a function or method parameter declaration, a trait name may be used directly as the parameter type.
+In a function or method parameter declaration, a trait name may be written directly as the parameter type.
+
+This is only sugar for an implicit constrained generic parameter.
+
+It does not introduce a trait-object type.
+It does not imply dynamic dispatch.
+It does not erase the concrete type.
 
 Example:
 
@@ -74,6 +80,36 @@ where __Reader0: Reader
 }
 ```
 
+Each sugared parameter introduces its own fresh hidden type parameter.
+
+That means:
+
+```vek
+fn pair(a: Reader, b: Reader) -> void {
+  ...
+}
+```
+
+conceptually desugars to:
+
+```vek
+fn pair<__Reader0, __Reader1>(a: __Reader0, b: __Reader1) -> void
+where __Reader0: Reader, __Reader1: Reader
+{
+  ...
+}
+```
+
+So `a` and `b` are not required to have the same concrete type.
+
+If multiple parameters or a return position must refer to the same concrete type, write the generic explicitly:
+
+```vek
+fn pair_same<T: Reader>(a: T, b: T) -> void {
+  ...
+}
+```
+
 Rules:
 
 - the sugar introduces a fresh hidden type parameter per parameter
@@ -81,7 +117,9 @@ Rules:
 - this remains statically dispatched and monomorphized
 - this sugar does not mean trait objects or dynamic dispatch
 - if multiple parameters or a return type must refer to the same concrete type, write explicit generics instead
-- this sugar is valid only in parameter declarations, not in local bindings, struct fields, enum payloads, return types, or function type syntax
+- this sugar is valid only in parameter declarations
+- this sugar is not valid in local bindings, struct fields, enum payloads, return types, or function type syntax
+- a trait name outside this parameter-sugar position is not a first-class trait-object type in v1
 
 ## Function Value Status
 
