@@ -72,6 +72,9 @@ trait Formattable {
 
 trait Unwrappable<T> {
   fn unwrap(self) -> T;
+  fn unwrap_or(self, default: T) -> T;
+  fn is_some(self) -> bool;
+  fn is_none(self) -> bool;
 }
 ```
 
@@ -116,7 +119,7 @@ enum Result<T, E> {
 The core panic surface is:
 
 ```vek
-fn panic(message: string) -> void;
+extern fn panic(message: string) -> void;
 ```
 
 `panic` is for unrecoverable failure paths.

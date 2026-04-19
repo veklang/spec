@@ -70,7 +70,7 @@ String storage is UTF-16. String length and indexing are defined in Unicode scal
 The active keyword set is currently:
 
 - Flow: `if`, `else`, `match`, `for`, `while`, `break`, `continue`, `return`
-- Declarations: `let`, `const`, `fn`, `inline`, `struct`, `type`, `trait`, `enum`, `pub`, `import`
+- Declarations: `let`, `const`, `fn`, `inline`, `extern`, `struct`, `type`, `trait`, `enum`, `pub`, `import`
 - Other language keywords: `mut`, `in`, `from`, `as`, `where`, `satisfies`, `Self`
 - Special types: `void`, `null`
 - Literal keywords: `true`, `false`, `NaN`, `Infinity`

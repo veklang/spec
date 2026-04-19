@@ -114,6 +114,22 @@ Planned future target families:
 
 Support should be described in terms of concrete target triples as the backend matures.
 
+## The `extern` Keyword
+
+The `extern` modifier marks a function as having no Vek body — its implementation is provided by the native runtime or a linked C layer.
+
+```vek
+extern fn panic(message: string) -> void;
+```
+
+An `extern fn` declaration has a signature but no body block. The compiler treats it as an opaque symbol resolved at link time.
+
+**`extern` is not user-accessible in v1.**
+
+There is no user-facing C foreign-function interface yet. `extern` is reserved for compiler-internal use to declare the small set of runtime-backed symbols (such as `panic`) that the core library requires. User code cannot declare `extern fn` items.
+
+This restriction may be lifted in a future version when a proper FFI story is designed.
+
 ## Interop
 
 C interop is a major strength of the design.
