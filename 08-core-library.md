@@ -84,7 +84,6 @@ Notes:
 - `Ordered<T>` powers explicit ordering comparisons through `compare(...)`
 - `Iterable<T>` is the trait used by `for item in value { ... }`
 - `Formattable` is the core explicit string-conversion trait
-- core primitive numerics, `bool`, and `string` satisfy `Formattable`
 
 ## `core:enums`
 
@@ -103,10 +102,31 @@ enum Result<T, E> {
 
   satisfies Unwrappable<T> {
     fn unwrap(self) -> T {
-      match self {
-        Ok(v) => return v,
-        Err(_) => panic("unwrap on Err"),
-      }
+      return match self {
+        Ok(value) => value,
+        Err(_) => panic("called unwrap on an Err value"),
+      };
+    }
+
+    fn unwrap_or(self, default: T) -> T {
+      return match self {
+        Ok(value) => value,
+        Err(_) => default,
+      };
+    }
+
+    fn is_some(self) -> bool {
+      return match self {
+        Ok(_) => true,
+        Err(_) => false,
+      };
+    }
+
+    fn is_none(self) -> bool {
+      return match self {
+        Ok(_) => false,
+        Err(_) => true,
+      };
     }
   }
 }
@@ -125,6 +145,63 @@ extern fn panic(message: string) -> void;
 `panic` is for unrecoverable failure paths.
 
 Calling `panic` terminates normal control flow and transfers to the implementation-defined panic path provided by the minimal runtime.
+
+## Built-in Satisfactions
+
+The following satisfactions are provided implicitly by the language without a user-written `satisfies` block. They are part of the core specification.
+
+### Primitives (integers, floats)
+
+Integer types (`i8`, `i16`, `i32`, `i64`, `u8`, `u16`, `u32`, `u64`) and float types (`f16`, `f32`, `f64`) satisfy:
+
+- `Equal<T>` — value equality
+- `Hashable` — hash of the bit pattern
+- `Ordered<T>` — numeric ordering
+- `Cloneable` — trivial copy
+- `Defaultable` — default value is `0`
+- `Formattable` — decimal string representation
+
+### `bool`
+
+`bool` satisfies `Equal<bool>`, `Hashable`, `Cloneable`, `Defaultable` (default `false`), and `Formattable`. `bool` does **not** satisfy `Ordered<bool>` — boolean values have no total ordering.
+
+### `string`
+
+`string` satisfies `Equal<string>`, `Hashable`, `Ordered<string>` (lexicographic), `Cloneable`, `Defaultable` (default `""`), and `Formattable`.
+
+### `Array<T>`
+
+`Array<T>` satisfies:
+
+- `Iterable<T>` — always
+- `Formattable` — when `T: Formattable`
+- `Cloneable` — when `T: Cloneable`
+- `Defaultable` — always; default is `[]`
+
+### Tuples
+
+A tuple `(T1, T2, ...)` satisfies:
+
+- `Equal<(T1, T2, ...)>` — when every `Ti: Equal<Ti>` (element-wise)
+- `Hashable` — when every `Ti: Hashable`
+- `Formattable` — when every `Ti: Formattable`
+- `Cloneable` — when every `Ti: Cloneable`
+
+### Nullable `T?`
+
+`T?` satisfies:
+
+- `Equal<T?>` — when `T: Equal<T>`
+- `Formattable` — when `T: Formattable`
+- `Unwrappable<T>` — always; `unwrap` panics on `null`, `unwrap_or` returns the default on `null`, `is_some` and `is_none` check for null
+
+### `Ordering`
+
+`Ordering` satisfies `Equal<Ordering>`, `Hashable`, and `Formattable`.
+
+### `Result<T, E>`
+
+`Result<T, E>` satisfies `Unwrappable<T>` via its explicit `satisfies` block above. It additionally satisfies `Formattable` when `T: Formattable` and `E: Formattable`.
 
 ## Relationship to the Compiler
 
