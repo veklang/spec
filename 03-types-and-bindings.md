@@ -107,7 +107,7 @@ Supported built-in indexing cases are:
 ### String Indexing
 
 - `s[i]` returns a `string` containing exactly one Unicode scalar value
-- string indexing is zero-based by Unicode scalar value, not UTF-16 code unit
+- string indexing is zero-based by Unicode scalar value, not UTF-8 byte offset
 - negative indexes are out of bounds
 - out-of-bounds string indexing is a runtime panic
 - strings are immutable, so indexed assignment is not allowed

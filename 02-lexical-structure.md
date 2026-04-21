@@ -63,7 +63,7 @@ Float semantics follow IEEE-754 for the target width.
 - Unknown escapes are errors.
 - Multiline strings are allowed without a separate literal form.
 
-String storage is UTF-16. String length and indexing are defined in Unicode scalar values rather than UTF-16 code units. Indexing by code point is `O(n)`.
+String storage is UTF-8. String length and indexing are defined in Unicode scalar values rather than UTF-8 bytes. Indexing by scalar value is `O(n)`.
 
 ## Active Keywords
 
