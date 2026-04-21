@@ -162,6 +162,30 @@ If a side effect must happen, it should be placed in explicit startup code rathe
 
 Compilers should warn when a discarded top-level initializer appears to exist only for side effects.
 
+## The `main` Function
+
+The entry point of an executable Vek program is a top-level function named `main`.
+
+`main` must take no parameters and must return either `void` or `i32`:
+
+```vek
+fn main() -> void {
+  // process exits with status 0
+}
+
+fn main() -> i32 {
+  return 42; // process exits with status 42
+}
+```
+
+Rules:
+
+- `main` must be declared at the top level with no parameters
+- the return type must be `void` or `i32`; any other return type is a compile-time error
+- a `void` main exits the process with status `0`
+- an `i32` main exits the process with the returned value as the status code
+- the exact range of meaningful exit codes is platform-defined; on POSIX systems only the low 8 bits are typically significant
+
 ## Reachability and Treeshaking
 
 Vek performs semantic reachability analysis after typechecking.
