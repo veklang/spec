@@ -146,6 +146,24 @@ Supported built-in cast domains include the core primitive types. User-defined t
 
 `=` assigns to an assignable place expression.
 
+Compound assignment operators are statement-form shorthand:
+
+- `+=`
+- `-=`
+- `*=`
+- `/=`
+- `%=`
+- `<<=`
+- `>>=`
+- `&=`
+- `^=`
+- `|=`
+
+`place op= value` has the same type rules and result as `place = place op value`,
+except the place expression is evaluated only once. For example, `xs[i] += 1`
+evaluates `xs` and `i` once, reads the current element, computes the addition,
+and writes the result back.
+
 Assignable place expressions are:
 
 - a mutable local binding declared with `let`
