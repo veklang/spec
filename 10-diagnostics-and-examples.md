@@ -96,6 +96,7 @@ The diagnostic format is:
 | E2401 | Integer literal out of range. |
 | E2402 | Compile-time integer overflow. |
 | E2403 | Compile-time invalid shift. |
+| E2404 | Compile-time division or modulo by zero. |
 
 ### Checker Errors — Mutability and Assignment (E25xx)
 

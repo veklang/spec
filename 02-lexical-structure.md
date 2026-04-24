@@ -35,9 +35,21 @@ Integer semantics:
 
 - Compile-time-proven overflow is a compile-time error.
 - Compile-time-proven invalid shifts are compile-time errors.
-- Runtime overflow wraps.
-- Shift amounts greater than or equal to the bit width count as overflow.
-- Negating the minimum signed value overflows.
+- Compile-time-proven division or modulo by zero is a compile-time error.
+- Runtime integer overflow wraps; it does not trap.
+- Runtime wrapping applies to integer `+`, `-`, `*`, and unary `-`.
+- Wrapping is modulo `2^N`, where `N` is the bit width of the operand type.
+- For signed integers, the wrapped bit pattern is interpreted as a two's-complement value of the same width.
+- Shift amounts greater than or equal to the bit width count as invalid shifts.
+- Runtime shifts with a negative count or a count greater than or equal to the bit width panic.
+- Left shift `<<` is equivalent to multiplication by `2^count` modulo `2^N` when the shift count is valid.
+- Right shift `>>` is logical for unsigned integers and arithmetic (sign-extending) for signed integers when the shift count is valid.
+- Negating the minimum signed value wraps to itself.
+- Integer division truncates toward zero.
+- Integer division by zero panics.
+- Integer modulo by zero panics.
+- Signed `MIN / -1` wraps to `MIN`.
+- Signed `MIN % -1` evaluates to `0`.
 - Integer literals that do not fit the target type are compile-time errors.
 - Bitwise operations are defined over the fixed-width representation.
 
@@ -115,6 +127,13 @@ Calls, indexing, and member access bind tighter than every unary or binary opera
 - `|`
 
 Integer arithmetic uses the overflow rules defined above. Floating-point arithmetic follows IEEE-754 for the target width.
+
+Concretely:
+
+- `+`, `-`, `*`, and unary `-` wrap at runtime and do not panic on overflow.
+- `/` and `%` panic only on zero divisors.
+- `<<` and `>>` panic only on invalid runtime shift counts.
+- Overflow is therefore distinct from invalid operations: overflow wraps, while invalid division/modulo/shift operations panic.
 
 `+` also concatenates strings. When one side is `string`, the other side must be explicitly convertible or already typed as `string`; there is no implicit numeric-to-string conversion.
 
