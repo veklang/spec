@@ -205,4 +205,4 @@ Typical roots include:
 
 Unused declarations may be dropped before C emission. Linker-level dead-code elimination may further reduce the final binary.
 
-The runtime/core/std layering is defined in chapters 7 through 9.
+The runtime/core/std layering is defined by the runtime boundary chapter together with the core-library and standard-library chapters.

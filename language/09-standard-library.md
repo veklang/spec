@@ -23,7 +23,7 @@ fn main() {
 The standard library should be:
 
 - written in Vek as much as possible
-- layered on top of the minimal native runtime/binding chapter
+- layered on top of the language runtime boundary and the implementation runtime beneath it
 - exposed as ordinary modules and types
 - broad enough to cover normal systems-programming and application needs
 - conservative about hidden magic
@@ -132,7 +132,7 @@ Higher-level protocol libraries may still live outside the stdlib when appropria
 
 ## Layering Rules
 
-The public stdlib should sit above the core library and the minimal runtime.
+The public stdlib should sit above the core library and the implementation runtime.
 
 Conceptually:
 
