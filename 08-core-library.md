@@ -152,7 +152,7 @@ The following satisfactions are provided implicitly by the language without a us
 
 ### Primitives (integers, floats)
 
-Integer types (`i8`, `i16`, `i32`, `i64`, `u8`, `u16`, `u32`, `u64`) and float types (`f16`, `f32`, `f64`) satisfy:
+Integer types (`i8`, `i16`, `i32`, `i64`, `u8`, `u16`, `u32`, `u64`) and float types (`f32`, `f64`) satisfy:
 
 - `Equal<T>` — value equality
 - `Hashable` — hash of the bit pattern

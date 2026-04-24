@@ -4,9 +4,11 @@
 
 - signed integers: `i8`, `i16`, `i32`, `i64`
 - unsigned integers: `u8`, `u16`, `u32`, `u64`
-- floating point: `f16`, `f32`, `f64`
+- floating point: `f32`, `f64`
 - other primitives: `bool`, `string`
 - special types: `void`, `null`
+
+Future versions may add additional primitive numeric types such as `f16`, `i128`, `u128`, and `f128`.
 
 ## Composite Surface Syntax
 
