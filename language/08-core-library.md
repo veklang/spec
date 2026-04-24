@@ -73,8 +73,6 @@ trait Formattable {
 trait Unwrappable<T> {
   fn unwrap(self) -> T;
   fn unwrap_or(self, default: T) -> T;
-  fn is_some(self) -> bool;
-  fn is_none(self) -> bool;
 }
 ```
 
@@ -112,20 +110,6 @@ enum Result<T, E> {
       return match self {
         Ok(value) => value,
         Err(_) => default,
-      };
-    }
-
-    fn is_some(self) -> bool {
-      return match self {
-        Ok(_) => true,
-        Err(_) => false,
-      };
-    }
-
-    fn is_none(self) -> bool {
-      return match self {
-        Ok(_) => false,
-        Err(_) => true,
       };
     }
   }
@@ -193,7 +177,7 @@ A tuple `(T1, T2, ...)` satisfies:
 
 - `Equal<T?>` — when `T: Equal<T>`
 - `Formattable` — when `T: Formattable`
-- `Unwrappable<T>` — always; `unwrap` panics on `null`, `unwrap_or` returns the default on `null`, `is_some` and `is_none` check for null
+- `Unwrappable<T>` — always; `unwrap` panics on `null` and `unwrap_or` returns the default on `null`
 
 ### `Ordering`
 

@@ -148,6 +148,9 @@ Vek uses a dedicated postfix nullable type operator: `?`.
 - `null` may be assigned to any nullable type
 - nullable values must be checked before use
 - control-flow narrowing applies for explicit checks the compiler can prove, such as `x != null`
+- nullable values support `unwrap()` and `unwrap_or(default)` as minimal extraction helpers
+- `unwrap()` returns the inner value or panics on `null`
+- `unwrap_or(default)` returns the inner value or the provided default on `null`
 
 Examples:
 
