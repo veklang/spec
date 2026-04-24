@@ -101,6 +101,7 @@ interface IrFunction {
   id: IrFunctionId;
   sourceName?: string;
   linkName: string;
+  isInline: boolean;
   signature: IrFunctionType;
   params: IrParam[];
   locals: IrLocal[];
@@ -118,6 +119,10 @@ Rules:
 - Methods include their owner type in the mangled name.
 - Runtime helpers use reserved `__vek_*` names.
 - User-visible names must never be trusted as already C-safe.
+- `isInline` records whether the source declaration carried the `inline`
+  modifier and still qualifies for an emitted backend hint.
+- `isInline` must be `false` for `body: "extern"` functions and compiler-
+  generated helper functions.
 
 ## Globals
 

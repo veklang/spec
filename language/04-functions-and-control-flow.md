@@ -246,6 +246,13 @@ inline fn add(x: i32, y: i32) -> i32 {
 
 Inlining behavior is implementation-defined and may be handled entirely by the compiler and downstream C optimizer.
 
+The current C backend lowers emitted inline-marked function and method definitions as `static inline`.
+
+Using `inline` also triggers a warning:
+
+- on an emitted definition, because `inline` is only a backend hint and the downstream C compiler may still choose not to inline it
+- on an `extern fn`, because `inline` has no effect when there is no local emitted function body
+
 ## Error Handling
 
 Vek uses explicit `Result<T, E>`-style errors. There are no exceptions.

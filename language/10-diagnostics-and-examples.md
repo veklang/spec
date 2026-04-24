@@ -154,6 +154,8 @@ The diagnostic format is:
 | W2900 | Declaration `'{name}'` is never used. |
 | W2901 | Unused local `'{name}'`. |
 | W2902 | Unused parameter `'{name}'`. |
+| W2903 | `inline` is only a backend hint; the emitted C may still not be inlined by the downstream compiler. |
+| W2904 | `inline` has no effect on `extern fn`; no local function body is emitted to inline. |
 
 ## Example: Minimal Program
 

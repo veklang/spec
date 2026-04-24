@@ -7,6 +7,7 @@ It is responsible for:
 - choosing C declarations for IR types
 - emitting prototypes
 - emitting function definitions
+- mapping `IrFunction.isInline` to local C inlining hints where applicable
 - emitting runtime includes
 - emitting runtime calls
 - emitting block labels and gotos
@@ -116,6 +117,17 @@ the C runtime.
 
 User-visible source names must be sanitized to be C-safe before use in link
 names.
+
+## Inline Functions
+
+If `IrFunction.isInline` is `true` and `IrFunction.body` is `"defined"`, the C
+emitter currently emits the function as `static inline`.
+
+This is only a backend hint:
+
+- the emitted C still has normal Vek semantics if the downstream C compiler
+  does not inline the function
+- `body: "extern"` functions are never emitted as inline definitions
 
 ## Runtime Boundary
 
